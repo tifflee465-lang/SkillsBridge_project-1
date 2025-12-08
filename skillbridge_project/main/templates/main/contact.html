@@ -1,0 +1,99 @@
+{% extends 'main.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Contact Us</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Contact Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5><i class="bi bi-envelope-fill text-primary me-2"></i> Email</h5>
+                    <p class="text-muted">info@skillbridge.com</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h5><i class="bi bi-geo-alt-fill text-primary me-2"></i> Location</h5>
+                    <p class="text-muted">123 Community Street<br>Skillville, SV 12345</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h5><i class="bi bi-telephone-fill text-primary me-2"></i> Phone</h5>
+                    <p class="text-muted">+1 (555) 123-4567</p>
+                </div>
+                
+                <div>
+                    <h5 class="mb-3">Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="bi bi-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="btn btn-outline-danger">
+                            <i class="bi bi-instagram"></i> Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ Preview -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Frequently Asked Questions</h5>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                How do I get started?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Simply sign up, create your profile, and list the skills you can offer and what you want to learn.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Is SkillBridge free to use?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! SkillBridge is completely free to use. We believe in creating accessible opportunities for everyone.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'faq' %}" class="btn btn-outline-primary btn-sm">View All FAQs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

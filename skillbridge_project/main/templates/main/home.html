@@ -1,0 +1,132 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container py-5">
+        <h1 class="display-4 fw-bold text-white mb-4">Bridging Skills, Building Communities</h1>
+        <p class="lead text-white mb-4">Connect with people in your community to exchange skills without money.</p>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 me-2">Join Now</a>
+        <a href="{% url 'explore' %}" class="btn btn-outline-light btn-lg px-4">Browse Skills</a>
+        {% else %}
+        <a href="{% url 'explore' %}" class="btn btn-light btn-lg px-4 me-2">Find Matches</a>
+        <a href="{% url 'profile_setup' %}" class="btn btn-outline-light btn-lg px-4">Add Skills</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">How SkillBridge Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="display-1 text-primary mb-3">1</div>
+                        <h4 class="card-title">Create Your Profile</h4>
+                        <p class="card-text">Sign up and list the skills you can offer and what you want to learn.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="display-1 text-primary mb-3">2</div>
+                        <h4 class="card-title">Find Matches</h4>
+                        <p class="card-text">Discover people whose needs match your skills and vice versa.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="display-1 text-primary mb-3">3</div>
+                        <h4 class="card-title">Exchange & Grow</h4>
+                        <p class="card-text">Connect, exchange skills, and build meaningful community relationships.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SDG Impact Section -->
+<section class="sdg-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Impact on Sustainable Development Goals</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center border-0 h-100">
+                    <div class="card-body">
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                            <span class="display-4 fw-bold text-danger">1</span>
+                        </div>
+                        <h4 class="card-title">No Poverty</h4>
+                        <p class="card-text">By enabling skill exchange without money, we reduce financial barriers to learning and services.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-0 h-100">
+                    <div class="card-body">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                            <span class="display-4 fw-bold text-warning">8</span>
+                        </div>
+                        <h4 class="card-title">Decent Work & Economic Growth</h4>
+                        <p class="card-text">We empower people to use their talents productively and gain new skills for better opportunities.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-0 h-100">
+                    <div class="card-body">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                            <span class="display-4 fw-bold text-info">10</span>
+                        </div>
+                        <h4 class="card-title">Reduced Inequalities</h4>
+                        <p class="card-text">SkillBridge creates equal opportunities for everyone to learn and contribute regardless of background.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Success Stories -->
+<section class="testimonials-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Recent Success Stories</h2>
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle p-3 me-3">
+                                <i class="bi bi-person-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">{{ testimonial.user.username }}</h5>
+                                <small class="text-muted">{{ testimonial.skill_exchanged }}</small>
+                            </div>
+                        </div>
+                        <p class="card-text">"{{ testimonial.content|truncatewords:20 }}"</p>
+                        <a href="{% url 'testimonials' %}" class="btn btn-outline-primary btn-sm">Read Full Story</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No testimonials yet. Be the first to share your story!</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'testimonials' %}" class="btn btn-primary">View All Stories</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

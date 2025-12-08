@@ -1,0 +1,83 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="mb-3">Frequently Asked Questions</h1>
+        <p class="lead text-muted">Find answers to common questions about SkillBridge</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- FAQ Categories -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
+            <button class="btn btn-outline-primary category-filter active" data-category="all">All</button>
+            {% for category in categories %}
+            <button class="btn btn-outline-primary category-filter" data-category="{{ category }}">{{ category|title }}</button>
+            {% endfor %}
+        </div>
+        
+        <!-- FAQ Accordion -->
+        <div class="accordion" id="faqAccordion">
+            {% for faq in faqs %}
+            <div class="accordion-item faq-item" data-category="{{ faq.category }}">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ faq.id }}">
+                        {{ faq.question }}
+                        <span class="badge bg-secondary ms-2">{{ faq.category }}</span>
+                    </button>
+                </h2>
+                <div id="faq{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        {{ faq.answer|linebreaks }}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info text-center">
+                <p class="mb-0">No FAQs available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Still Have Questions -->
+        <div class="card mt-5">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-3">Still Have Questions?</h3>
+                <p class="lead mb-4">Can't find the answer you're looking for? Please contact our team.</p>
+                <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FAQ Category Filtering
+    const filterButtons = document.querySelectorAll('.category-filter');
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const category = this.dataset.category;
+            
+            // Filter FAQ items
+            faqItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

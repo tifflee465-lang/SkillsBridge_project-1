@@ -1,0 +1,74 @@
+{% extends 'main.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Setup Your Skills</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Tell us what skills you offer and what skills you're looking to learn.</p>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <h5>Skills You Offer</h5>
+                            <div class="row">
+                                {% for skill in skills %}
+                                    {% if skill in form.instance.skills_offered.all %}
+                                        <div class="col-md-6 mb-2">
+                                            <input type="checkbox" class="form-check-input" name="skills_offered" value="{{ skill.id }}" id="skill_{{ skill.id }}" checked>
+                                            <label class="form-check-label" for="skill_{{ skill.id }}">
+                                                {{ skill.name }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-6 mb-2">
+                                            <input type="checkbox" class="form-check-input" name="skills_offered" value="{{ skill.id }}" id="skill_{{ skill.id }}">
+                                            <label class="form-check-label" for="skill_{{ skill.id }}">
+                                                {{ skill.name }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="mb-4">
+                            <h5>Skills You Want to Learn</h5>
+                            <div class="row">
+                                {% for skill in skills %}
+                                    {% if skill in form.instance.skills_needed.all %}
+                                        <div class="col-md-6 mb-2">
+                                            <input type="checkbox" class="form-check-input" name="skills_needed" value="{{ skill.id }}" id="needed_{{ skill.id }}" checked>
+                                            <label class="form-check-label" for="needed_{{ skill.id }}">
+                                                {{ skill.name }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-6 mb-2">
+                                            <input type="checkbox" class="form-check-input" name="skills_needed" value="{{ skill.id }}" id="needed_{{ skill.id }}">
+                                            <label class="form-check-label" for="needed_{{ skill.id }}">
+                                                {{ skill.name }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Skills</button>
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Skip for Now</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

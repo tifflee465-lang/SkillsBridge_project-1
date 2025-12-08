@@ -1,0 +1,106 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    {% if user_profile.profile_picture %}
+                        <img src="{{ user_profile.profile_picture.url }}" class="rounded-circle mb-3" style="max-width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                            <i class="bi bi-person-fill" style="font-size: 3rem; color: #ccc;"></i>
+                        </div>
+                    {% endif %}
+                    <h3>{{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
+                    {% if user_profile.location %}
+                        <p class="text-muted"><i class="bi bi-geo-alt"></i> {{ user_profile.location }}</p>
+                    {% endif %}
+                    
+                    {% if user_profile.rating > 0 %}
+                        <div class="mb-3">
+                            <span class="badge bg-warning">⭐ {{ user_profile.rating|floatformat:1 }}/5</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if user_profile.available %}
+                        <span class="badge bg-success">Available</span>
+                    {% else %}
+                        <span class="badge bg-danger">Not Available</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if user_profile.bio %}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">About</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ user_profile.bio }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8">
+            {% if user_profile.skills_offered.all %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Skills I Offer</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for skill in user_profile.skills_offered.all %}
+                                <div class="col-md-6 mb-2">
+                                    <span class="badge bg-success-light border border-success text-dark">{{ skill.name }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if user_profile.skills_needed.all %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Skills I Want to Learn</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for skill in user_profile.skills_needed.all %}
+                                <div class="col-md-6 mb-2">
+                                    <span class="badge bg-info-light border border-info text-dark">{{ skill.name }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if potential_matches %}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Potential Matches</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">These people need skills that {{ user_profile.user.first_name|default:user_profile.user.username }} offers:</p>
+                        {% for match in potential_matches %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <h6>{{ match.user.get_full_name|default:match.user.username }}</h6>
+                                <p class="small text-muted mb-2">
+                                    {% if match.location %}
+                                        <i class="bi bi-geo-alt"></i> {{ match.location }}
+                                    {% endif %}
+                                </p>
+                                <a href="{% url 'profile_detail' match.user.username %}" class="btn btn-sm btn-primary">View Profile</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

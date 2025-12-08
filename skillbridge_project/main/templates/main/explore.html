@@ -1,0 +1,191 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4">Find Skill Exchange Partners</h1>
+        
+        <!-- Search Form -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="GET" action="{% url 'explore' %}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" 
+                                   name="q" 
+                                   class="form-control" 
+                                   placeholder="Search by skill, name, or keyword..."
+                                   value="{{ query }}">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                {% for value, label in categories %}
+                                <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" 
+                                   name="location" 
+                                   class="form-control" 
+                                   placeholder="Location"
+                                   value="{{ selected_location }}">
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a href="{% url 'explore' %}" class="btn btn-outline-secondary">Clear Filters</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Skills Filter -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Skill Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'explore' %}" 
+                       class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                        All Categories
+                    </a>
+                    {% for value, label in categories %}
+                    <a href="{% url 'explore' %}?category={{ value }}" 
+                       class="list-group-item list-group-item-action {% if selected_category == value %}active{% endif %}">
+                        {{ label }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Popular Skills -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Popular Skills</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    {% for skill in skills|slice:":10" %}
+                    <a href="{% url 'explore' %}?q={{ skill.name }}" class="badge bg-light text-dark text-decoration-none">{{ skill.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <!-- Results -->
+        <div class="row">
+            {% if profiles %}
+            {% for profile in profiles %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" 
+                                 alt="{{ profile.user.username }}" 
+                                 class="rounded-circle me-3"
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h5 class="card-title mb-0">{{ profile.user.get_full_name|default:profile.user.username }}</h5>
+                                {% if profile.location %}
+                                <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ profile.location }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Offered Skills -->
+                        <div class="mb-3">
+                            <small class="text-muted">Offers:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                {% for skill in profile.skills_offered.all|slice:":3" %}
+                                <span class="badge bg-success">{{ skill.name }}</span>
+                                {% endfor %}
+                                {% if profile.skills_offered.count > 3 %}
+                                <span class="badge bg-light text-dark">+{{ profile.skills_offered.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Needed Skills -->
+                        <div class="mb-3">
+                            <small class="text-muted">Needs:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                {% for skill in profile.skills_needed.all|slice:":3" %}
+                                <span class="badge bg-warning">{{ skill.name }}</span>
+                                {% endfor %}
+                                {% if profile.skills_needed.count > 3 %}
+                                <span class="badge bg-light text-dark">+{{ profile.skills_needed.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="text-muted">
+                                <i class="bi bi-star-fill text-warning"></i> {{ profile.rating|floatformat:1 }}
+                            </span>
+                            <a href="{% url 'profile_detail' profile.user.username %}" class="btn btn-primary btn-sm">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p class="mb-0">No profiles found matching your search. Try different keywords or <a href="{% url 'explore' %}">browse all profiles</a>.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if profiles.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if profiles.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ profiles.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for num in profiles.paginator.page_range %}
+                {% if profiles.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > profiles.number|add:'-3' and num < profiles.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if profiles.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ profiles.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

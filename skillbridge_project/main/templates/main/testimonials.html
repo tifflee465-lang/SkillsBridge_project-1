@@ -1,0 +1,96 @@
+{%extends 'main.html'%}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="mb-3">Success Stories</h1>
+        <p class="lead text-muted">Real experiences from SkillBridge users who exchanged skills and built connections.</p>
+    </div>
+</div>
+
+<!-- Add Testimonial Form -->
+{% if user.is_authenticated %}
+<div class="row mb-5">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Share Your Story</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Submit Story</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Testimonials Grid -->
+<div class="row">
+    {% for testimonial in testimonials %}
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    {% if testimonial.user.userprofile.profile_picture %}
+                    <img src="{{ testimonial.user.userprofile.profile_picture.url }}" 
+                         alt="{{ testimonial.user.username }}" 
+                         class="rounded-circle me-3"
+                         style="width: 60px; height: 60px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                         style="width: 60px; height: 60px;">
+                        <i class="bi bi-person-fill text-white fs-4"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title mb-0">{{ testimonial.title }}</h5>
+                        <p class="text-muted mb-0">by {{ testimonial.user.username }}</p>
+                        <small class="text-muted">{{ testimonial.created_at|date:"F d, Y" }}</small>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <span class="badge bg-info">{{ testimonial.skill_exchanged }}</span>
+                </div>
+                <p class="card-text">{{ testimonial.content|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">No Stories Yet</h4>
+            <p>Be the first to share your SkillBridge success story!</p>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn btn-primary">Login to Share</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Call to Action -->
+{% if testimonials %}
+<div class="row mt-5">
+    <div class="col-12 text-center">
+        <div class="card bg-light border-0">
+            <div class="card-body py-5">
+                <h3 class="mb-3">Ready to Create Your Own Success Story?</h3>
+                <p class="lead mb-4">Join SkillBridge today and start exchanging skills with your community.</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'explore' %}" class="btn btn-primary btn-lg">Find Exchange Partners</a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Join Now</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
