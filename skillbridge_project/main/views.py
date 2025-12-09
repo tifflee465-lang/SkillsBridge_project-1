@@ -5,7 +5,7 @@ from django.db.models import Q
 from .models import FAQ, ContactMessage
 from .forms import ContactForm
 from users.models import Testimonial, UserProfile, Skill
-
+from django.contrib.auth import logout, authenticate, login
 def home(request):
     return render(request, 'main/home.html')
     context = {
@@ -105,3 +105,8 @@ def faq(request):
         'categories': categories,
     }
     return render(request, 'main/faq.html', context)
+
+def logoutUser(request):
+    context ={}
+    logout(request)
+    return redirect('home')

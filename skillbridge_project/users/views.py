@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import UserProfile, Skill, Testimonial
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, SkillSelectionForm, TestimonialForm
-
+from django.contrib.auth import logout, authenticate, login
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -33,7 +34,7 @@ def profile(request):
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.userprofile)
+        p_form = ProfileUpdateForm(instance=request.user)
     
     context = {
         'title': 'My Profile',
@@ -85,3 +86,32 @@ def profile_detail(request, username):
         'potential_matches': potential_matches,
     }
     return render(request, 'users/profile_detail.html', context)
+
+
+
+def logoutUser(request):
+    context ={}
+    logout(request)
+    return redirect('home')
+
+def loginUser(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username)
+        print(password)
+        try:
+            user = User.objects.get(username=username)
+        except:
+            print("User does not exists!")
+
+        user = authenticate(request, username= username, password = password)
+
+        if user is not None: 
+            login(request, user)
+            return redirect('promoProducts')
+        else:
+            print('Wrong Credentials!!')
+
+    context ={}
+    return render(request,'users/login_form.html',context)
