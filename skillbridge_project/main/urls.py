@@ -8,5 +8,6 @@ urlspatterns=[
     path('explore/',views.explore, name='explore'),
     path('testimonials/',views.testimonials,name='testimonials'),
     path('faq/',views.faq, name='faq'),
+    path('logoutUser/',views.logoutUser,name='logoutUser'),
 ]
     
