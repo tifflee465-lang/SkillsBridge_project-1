@@ -22,7 +22,7 @@ from main import views as main_views
 from users import views as user_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from users import views as user_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -46,6 +46,11 @@ urlpatterns = [
     # Authentication URLs
     path('login', user_views.loginUser, name='login'),
     path('logout/', user_views.logoutUser, name='logoutUser'),
+     path('chat/', user_views.chat_rooms, name='chat_rooms'),
+    path('chat/<int:room_id>/', user_views.chat_room, name='chat_room'),
+    path('notifications/', user_views.notifications, name='notifications'),
+    path('connect/<str:username>/', user_views.connect_with_user, name='connect'),
+    
     
 ]
 

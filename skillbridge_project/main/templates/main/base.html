@@ -55,6 +55,40 @@
                 </ul>
             </div>
         </div>
+        <!-- In the navbar, after other menu items -->
+{% if user.is_authenticated %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <i class="bi bi-bell"></i>
+        {% with unread_count=user.notifications.filter.read=False.count %}
+        {% if unread_count  0 %}
+        <span class="badge bg-danger">{{ unread_count }}</span>
+        {% endif %}
+        {% endwith %}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><h6 class="dropdown-header">Notifications</h6></li>
+        {% for notification in user.notifications.all|slice:":5" %}
+        <li>
+            <a class="dropdown-item {% if not notification.read %}fw-bold{% endif %}" 
+               href="{{ notification.link|default:'#' }}">
+                {{ notification.message }}
+                <small class="text-muted d-block">{{ notification.created_at|timesince }} ago</small>
+            </a>
+        </li>
+        {% empty %}
+        <li><a class="dropdown-item text-muted" href="#">No notifications</a></li>
+        {% endfor %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{% url 'notifications' %}">View all notifications</a></li>
+    </ul>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'chat_rooms' %}">
+        <i class="bi bi-chat-left-text"></i> Messages
+    </a>
+</li>
+{% endif %}
     </nav>
 
     <!-- Main Content -->
