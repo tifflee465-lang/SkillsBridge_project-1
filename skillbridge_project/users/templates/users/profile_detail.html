@@ -103,4 +103,49 @@
         </div>
     </div>
 </div>
+<!-- Add this to the profile detail page -->
+<div class="card mt-4">
+    <div class="card-body text-center">
+        <h5>Ready to Connect?</h5>
+        <p>If your skills match, you can start a conversation</p>
+        
+        <!-- Check for matching skills -->
+        {% with user_profile=request.user.userprofile %}
+        {% with common_offered=user_profile.skills_offered.all|intersect:profile.skills_needed.all %}
+        {% with common_needed=user_profile.skills_needed.all|intersect:profile.skills_offered.all %}
+        
+        {% if common_offered or common_needed %}
+        <div class="alert alert-success">
+            <h6>🎯 Skills Match Found!</h6>
+            {% if common_offered %}
+            <p>You can help with: 
+                {% for skill in common_offered %}
+                <span class="badge bg-success">{{ skill.name }}</span>
+                {% endfor %}
+            </p>
+            {% endif %}
+            {% if common_needed %}
+            <p>They can help you with: 
+                {% for skill in common_needed %}
+                <span class="badge bg-info">{{ skill.name }}</span>
+                {% endfor %}
+            </p>
+            {% endif %}
+            
+            <a href="{% url 'connect' profile.user.username %}" class="btn btn-success btn-lg mt-2">
+                <i class="bi bi-chat-left-text"></i> Connect & Start Chat
+            </a>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>No matching skills found yet. Update your skills to connect.</p>
+            <a href="{% url 'profile_setup' %}" class="btn btn-primary">Update My Skills</a>
+        </div>
+        {% endif %}
+        
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+    </div>
+</div>
 {% endblock %}
